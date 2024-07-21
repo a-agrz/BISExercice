@@ -18,24 +18,10 @@ if __name__ == "__main__":
     customers_df = spark.read.csv(path + "/customers.csv", header=True, inferSchema=True)
     products_df = spark.read.csv(path + "/products.csv", header=True, inferSchema=True)
 
-    # Let's start by displaying a few rows from each DataFrame
-    print("Orders Data:")
-    orders_df.show(5)
-    print("Orders Data count : ")
-    orders_df.count()
-    print("Customers Data:")
-    customers_df.show(5)
-    print("Customers Data count : ")
-    customers_df.count()
-    print("Products Data:")
-    products_df.show(5)
-    print("Products Data count : ")
-    products_df.count()
-
     # due to error in timestamp handling we need to add this line if working with spark version >3.0
     spark.conf.set("spark.sql.legacy.timeParserPolicy", "LEGACY")
 
-    # ** Ordres table **
+    # ** Orders table **
 
     # Data Validation
     orders_df = orders_df.filter("InvoiceNo IS NOT NULL AND StockCode IS NOT NULL AND Quantity >= 0")
@@ -54,19 +40,6 @@ if __name__ == "__main__":
     # Data Cleaning and Validation
     products_df = products_df.filter("StockCode IS NOT NULL AND Description IS NOT NULL AND UnitPrice >= 0")
     products_df = products_df.dropna(subset=["StockCode", "Description"])
-
-    print("Orders Data:")
-    orders_df.show(5)
-    print("Orders Data count : ")
-    orders_df.count()
-    print("Customers Data:")
-    customers_df.show(5)
-    print("Customers Data count : ")
-    customers_df.count()
-    print("Products Data:")
-    products_df.show(5)
-    print("Products Data count : ")
-    products_df.count()
 
     # **** Data Ingestion  ****
     output_Path = "src/bisExercice/output"
