@@ -7,4 +7,3 @@ SPARK_HOME="/opt/homebrew/opt/apache-spark"
 $SPARK_HOME/bin/spark-submit \
   --master "local[4]" \
   src/bisExercice/spark/refactoringExercice.py
-/refactoringExercice.py
