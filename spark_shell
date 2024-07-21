@@ -1,0 +1,53 @@
+path = "/Users/abdallahaguerzame/Work/Swiss-BIS/sources"
+
+from pyspark.sql import functions as F
+
+df = spark.read.option("delimiter", ",").option("header", True).csv(path+"/orders.csv")
+
+df_withSchema = spark.read.option("delimiter", ",").option("header", True).option("inferSchema", True).csv(path+"/orders.csv")
+
+df.printSchema()
+root
+ |-- InvoiceNo: string (nullable = true)
+ |-- StockCode: string (nullable = true)
+ |-- Quantity: string (nullable = true)
+ |-- InvoiceDate: string (nullable = true)
+ |-- CustomerID: string (nullable = true)
+
+df_withSchema.printSchema()
+root
+ |-- InvoiceNo: string (nullable = true)
+ |-- StockCode: string (nullable = true)
+ |-- Quantity: integer (nullable = true)
+ |-- InvoiceDate: string (nullable = true)
+ |-- CustomerID: integer (nullable = true)
+
+
+df_filtred = df_withSchema.filter(df_withSchema.CustomerID.isNotNull())
+
+>>> df_withSchema.count()
+541909
+
+>>> df_filtred.count()
+406829
+
+>>> df_clean= df_filtred.drop_duplicates()
+>>> df_clean.count()
+401549
+
+>>> df_withTimestamp = df_clean.withColumn("InvoiceTimestamp", F.to_timestamp(df_clean.InvoiceDate,"M/d/yyyy HH:mm"))
+>>> df_withTimestamp.show(10)
++---------+---------+--------+----------------+----------+-------------------+
+|InvoiceNo|StockCode|Quantity|     InvoiceDate|CustomerID|   InvoiceTimestamp|
++---------+---------+--------+----------------+----------+-------------------+
+|   572295|    10120|       5|10/23/2011 13:49|     16686|2011-10-23 13:49:00|
+|   556222|    10125|      12|  6/9/2011 14:23|     17522|2011-06-09 14:23:00|
+|   537225|    10133|      10| 12/5/2010 16:41|     12748|2010-12-05 16:41:00|
+|   556214|    10133|      20|  6/9/2011 14:14|     14913|2011-06-09 14:14:00|
+|   558355|    10133|       4| 6/28/2011 14:58|     13614|2011-06-28 14:58:00|
+|   563750|    10133|      80| 8/19/2011 10:18|     16122|2011-08-19 10:18:00|
+|   546635|    10135|       2| 3/15/2011 12:11|     16392|2011-03-15 12:11:00|
+|   552624|    15036|      12| 5/10/2011 12:53|     14505|2011-05-10 12:53:00|
+|   559308|    15036|      12|  7/7/2011 13:05|     13158|2011-07-07 13:05:00|
+|   568326|    16008|      24| 9/26/2011 14:00|     13200|2011-09-26 14:00:00|
++---------+---------+--------+----------------+----------+-------------------+
