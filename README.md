@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project contains a refactored Spark application that performs data enrichment. Follow the steps below to set up your home directory and run the application.
+This project contains a refactored Spark application that performs data ingestion and data analaytics. Follow the steps below to set up your home directory and run the application.
 
 ## Prerequisites
 
